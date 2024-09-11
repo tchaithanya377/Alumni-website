@@ -5,31 +5,19 @@ import { db } from '../firebase'; // Import your Firebase config
 const GalleryPage = () => {
   const [mediaFiles, setMediaFiles] = useState([]);
 
-  // Fetch posts with media (images and videos) from Firestore
+  // Fetch media files (images and videos) from the 'gallery' collection in Firestore
   useEffect(() => {
     const fetchMediaFiles = async () => {
-      const postsCollection = collection(db, 'posts');
-      const postSnapshot = await getDocs(postsCollection);
+      const galleryCollection = collection(db, 'gallery'); // Fetching from 'gallery' collection
+      const gallerySnapshot = await getDocs(galleryCollection);
 
-      // Filter posts with media (images and videos)
-      const mediaPosts = postSnapshot.docs
-        .map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }))
-        .filter(
-          (post) =>
-            post.fileUrl &&
-            (post.fileUrl.endsWith('.jpg') ||
-              post.fileUrl.endsWith('.jpeg') ||
-              post.fileUrl.endsWith('.png') ||
-              post.fileUrl.endsWith('.gif') ||
-              post.fileUrl.endsWith('.mp4') ||
-              post.fileUrl.endsWith('.webm') ||
-              post.fileUrl.endsWith('.ogg'))
-        );
+      // Extract media files from Firestore
+      const mediaItems = gallerySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
-      setMediaFiles(mediaPosts);
+      setMediaFiles(mediaItems);
     };
 
     fetchMediaFiles();
@@ -45,7 +33,7 @@ const GalleryPage = () => {
           {mediaFiles.length > 0 ? (
             mediaFiles.map((media, index) => (
               <div key={index} className="border border-gray-300 rounded-lg overflow-hidden shadow-lg">
-                {media.fileUrl.endsWith('.mp4') || media.fileUrl.endsWith('.webm') || media.fileUrl.endsWith('.ogg') ? (
+                {media.fileType === 'video' ? (
                   <video controls className="w-full h-64 object-cover">
                     <source src={media.fileUrl} type="video/mp4" />
                     Your browser does not support the video tag.
@@ -53,7 +41,7 @@ const GalleryPage = () => {
                 ) : (
                   <img
                     src={media.fileUrl}
-                    alt="Gallery Item"
+                    alt={media.title}
                     className="w-full h-64 object-cover"
                   />
                 )}

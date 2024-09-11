@@ -60,6 +60,8 @@ const Navbar = () => {
           <Link to="/directory" className="hover:text-gray-300 transition duration-300">Alumni Directory</Link>
           <Link to="/events" className="hover:text-gray-300 transition duration-300">Events</Link>
           <Link to="/news" className="hover:text-gray-300 transition duration-300">News</Link>
+          <Link to="/sponsors" className="hover:text-gray-300 transition duration-300">Sponsors</Link>
+
           <Link to="/contact" className="hover:text-gray-300 transition duration-300">Contact Us</Link>
         </div>
 
@@ -127,6 +129,7 @@ const Navbar = () => {
           <Link to="/directory" className="block hover:text-gray-300 transition duration-300" onClick={() => setIsOpen(false)}>Alumni Directory</Link>
           <Link to="/events" className="block hover:text-gray-300 transition duration-300" onClick={() => setIsOpen(false)}>Events</Link>
           <Link to="/news" className="block hover:text-gray-300 transition duration-300" onClick={() => setIsOpen(false)}>News</Link>
+          <Link to='/sponsors' className="block hover:text-gray-300 transition duration-300" onClick={() => setIsOpen(false)}>Sponsor</Link>
           <Link to="/contact" className="block hover:text-gray-300 transition duration-300" onClick={() => setIsOpen(false)}>Contact Us</Link>
           
           {currentUser ? (

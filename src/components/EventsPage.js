@@ -1,4 +1,3 @@
-// src/components/EventsPage.jsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { collection, getDocs } from 'firebase/firestore'; // Firebase Firestore functions
@@ -11,17 +10,29 @@ const EventsPage = () => {
   // Fetch events from Firestore
   useEffect(() => {
     const fetchEvents = async () => {
-      const eventsCollection = collection(db, 'events'); // Replace 'events' with the actual collection name in Firestore
+      const eventsCollection = collection(db, 'events');
       const eventsSnapshot = await getDocs(eventsCollection);
-      const eventsList = eventsSnapshot.docs.map(doc => ({
-        id: doc.id, // Document ID
-        ...doc.data(), // Spread document data into the object
+      const eventsList = eventsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
       }));
 
-      // Separate events into upcoming and past events based on the current date
+      console.log("Fetched Events:", eventsList); // Debugging log
+
+      // Get today's date with time set to 00:00:00 for comparison purposes
       const now = new Date();
-      const upcoming = eventsList.filter(event => new Date(event.date) >= now);
-      const past = eventsList.filter(event => new Date(event.date) < now);
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      // Separate events into upcoming and past events based on the current date
+      const upcoming = eventsList.filter((event) => {
+        const eventDate = new Date(event.date);
+        return eventDate >= today; // Include events today as "upcoming"
+      });
+
+      const past = eventsList.filter((event) => {
+        const eventDate = new Date(event.date);
+        return eventDate < today; // Events that occurred before today are "past"
+      });
 
       setUpcomingEvents(upcoming);
       setPastEvents(past);
@@ -51,6 +62,15 @@ const EventsPage = () => {
                   className="bg-neutral p-6 rounded-lg shadow-md"
                   whileHover={{ scale: 1.05 }}
                 >
+                  {event.imageUrl ? (
+                    <img
+                      src={event.imageUrl}
+                      alt={event.title || 'Event Image'}
+                      className="w-full h-48 object-cover rounded-lg mb-4"
+                    />
+                  ) : (
+                    <p>No image available</p>
+                  )}
                   <h3 className="text-xl font-bold">{event.title}</h3>
                   <p className="text-sm text-textColor">Date: {new Date(event.date).toLocaleDateString()}</p>
                   <p className="text-sm text-textColor">Location: {event.location}</p>
@@ -74,6 +94,15 @@ const EventsPage = () => {
                   className="bg-neutral p-6 rounded-lg shadow-md"
                   whileHover={{ scale: 1.05 }}
                 >
+                  {event.imageUrl ? (
+                    <img
+                      src={event.imageUrl}
+                      alt={event.title || 'Event Image'}
+                      className="w-full h-48 object-cover rounded-lg mb-4"
+                    />
+                  ) : (
+                    <p>No image available</p>
+                  )}
                   <h3 className="text-xl font-bold">{event.title}</h3>
                   <p className="text-sm text-textColor">Date: {new Date(event.date).toLocaleDateString()}</p>
                   <p className="text-sm text-textColor">Location: {event.location}</p>

@@ -14,6 +14,7 @@ import Chat from './components/Chat';  // Assuming you added the Chat component
 import Posts from './components/PostsPage';  // Assuming you added the Posts component
 import GalleryPage from './components/GalleryPage';
 import ProfilePage from './components/ProfilePage';
+import SponsorPage from './components/SponsorPage';
 function App() {
   return (
     <Router>
@@ -32,6 +33,7 @@ function App() {
         <Route path='/post' element={<Posts />} />
         <Route path='/gallery' element={<GalleryPage/>} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path='/sponsors' element={<SponsorPage/>} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>

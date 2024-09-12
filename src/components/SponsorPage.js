@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { getDocs, collection, addDoc } from 'firebase/firestore';
+import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase'; // Import your Firebase config
 import { motion } from 'framer-motion';
 
 const SponsorPage = () => {
   const [sponsors, setSponsors] = useState([]);
-  const [newSponsor, setNewSponsor] = useState({
-    name: '',
-    description: '',
-    logoUrl: '',
-    websiteUrl: ''
-  });
 
   // Fetch sponsors from Firestore
   useEffect(() => {
@@ -27,41 +21,6 @@ const SponsorPage = () => {
 
     fetchSponsors();
   }, []);
-
-  // Handle form input change
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewSponsor((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  // Add new sponsor
-  const handleAddSponsor = async (e) => {
-    e.preventDefault();
-
-    // Add to Firestore
-    await addDoc(collection(db, 'sponsors'), newSponsor);
-
-    // Clear form
-    setNewSponsor({
-      name: '',
-      description: '',
-      logoUrl: '',
-      websiteUrl: ''
-    });
-
-    // Fetch sponsors again to update list
-    const sponsorsCollection = collection(db, 'sponsors');
-    const sponsorSnapshot = await getDocs(sponsorsCollection);
-    const sponsorList = sponsorSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
-    setSponsors(sponsorList);
-  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center py-10 px-6">
@@ -110,65 +69,24 @@ const SponsorPage = () => {
           )}
         </div>
 
-        {/* Add Sponsor Form */}
+        {/* Contact/Account Details for Sponsorship */}
         <div className="bg-gray-200 p-6 rounded-lg shadow-lg">
-          <h2 className="text-3xl font-bold mb-4 text-primary">Add a Sponsor</h2>
-          <form onSubmit={handleAddSponsor}>
-            <div className="mb-4">
-              <label className="block text-sm font-bold mb-2">Sponsor Name</label>
-              <input
-                type="text"
-                name="name"
-                value={newSponsor.name}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                placeholder="Enter sponsor name"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-bold mb-2">Sponsor Description</label>
-              <textarea
-                name="description"
-                value={newSponsor.description}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                placeholder="Enter sponsor description"
-                required
-              ></textarea>
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-bold mb-2">Sponsor Logo URL</label>
-              <input
-                type="url"
-                name="logoUrl"
-                value={newSponsor.logoUrl}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                placeholder="Enter sponsor logo URL"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-bold mb-2">Sponsor Website URL</label>
-              <input
-                type="url"
-                name="websiteUrl"
-                value={newSponsor.websiteUrl}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                placeholder="Enter sponsor website URL"
-              />
-            </div>
-            <div className="flex justify-center">
-              <button
-                type="submit"
-                className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition"
-              >
-                Add Sponsor
-              </button>
-            </div>
-          </form>
+          <h2 className="text-3xl font-bold mb-4 text-primary">Want to Sponsor Us?</h2>
+          <p className="text-lg text-gray-700 mb-4">
+            Interested in sponsoring our events or the college? You can reach out to us through the following details:
+          </p>
+          <div className="mb-4">
+            <h3 className="text-xl font-bold">Account Details</h3>
+            <p>Account Name: <strong>AlumniConnect</strong></p>
+            <p>Bank: <strong>XYZ Bank</strong></p>
+            <p>Account Number: <strong>1234567890</strong></p>
+            <p>IFSC Code: <strong>XYZB0001234</strong></p>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold">Contact Information</h3>
+            <p>Email: <a href="mailto:sponsor@alumniconnect.com" className="text-indigo-600 underline">sponsor@alumniconnect.com</a></p>
+            <p>Phone: <a href="tel:+1234567890" className="text-indigo-600 underline">+1234567890</a></p>
+          </div>
         </div>
       </div>
     </div>

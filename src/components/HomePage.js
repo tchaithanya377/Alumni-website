@@ -1,19 +1,37 @@
-// src/components/Homepage.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion'; // For animation
+import { collection, getDocs } from 'firebase/firestore'; // Import Firestore functions
+import { db } from '../firebase'; // Import your Firebase config
 
 const Homepage = () => {
-  // Sample Data for Events
-  const upcomingEvents = [
-    { id: 1, title: 'Annual Alumni Meetup', date: 'April 15, 2024' },
-    { id: 2, title: 'Alumni Tech Webinar', date: 'June 3, 2024' },
-  ];
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [pastEvents, setPastEvents] = useState([]);
 
-  const pastEvents = [
-    { id: 1, title: 'Startup Pitch Day', date: 'March 10, 2023' },
-    { id: 2, title: 'Alumni Reunion Dinner', date: 'November 28, 2023' },
-  ];
+  // Fetch events from Firestore and categorize them into upcoming and past
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const eventsCollection = collection(db, 'events'); // Firestore collection 'events'
+      const eventsSnapshot = await getDocs(eventsCollection);
+      const eventsList = eventsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      const now = new Date();
+
+      // Sort events by date (optional if not already sorted in Firestore)
+      const sortedEvents = eventsList.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      const upcoming = sortedEvents.filter(event => new Date(event.date) >= now).slice(0, 2); // Limit to 2 upcoming events
+      const past = sortedEvents.filter(event => new Date(event.date) < now).slice(-2); // Limit to 2 past events
+
+      setUpcomingEvents(upcoming);
+      setPastEvents(past);
+    };
+
+    fetchEvents();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-primary to-secondary flex flex-col justify-between">
@@ -97,12 +115,24 @@ const Homepage = () => {
       <section className="p-10 md:p-20 bg-neutral text-primary">
         <h2 className="text-3xl font-bold text-center mb-6">Upcoming Events</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {upcomingEvents.map(event => (
-            <div key={event.id} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-              <h3 className="text-2xl font-bold">{event.title}</h3>
-              <p className="text-lg text-gray-500">{event.date}</p>
-            </div>
-          ))}
+          {upcomingEvents.length > 0 ? (
+            upcomingEvents.map(event => (
+              <div key={event.id} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
+                {event.imageUrl && (
+                  <img
+                    src={event.imageUrl}
+                    alt={event.title}
+                    className="w-full h-48 object-cover rounded-lg mb-4"
+                  />
+                )}
+                <h3 className="text-2xl font-bold">{event.title}</h3>
+                <p className="text-lg text-gray-500">{new Date(event.date).toLocaleDateString()}</p>
+                <p>{event.description}</p>
+              </div>
+            ))
+          ) : (
+            <p>No upcoming events.</p>
+          )}
         </div>
       </section>
 
@@ -110,12 +140,24 @@ const Homepage = () => {
       <section className="p-10 md:p-20 bg-white text-primary">
         <h2 className="text-3xl font-bold text-center mb-6">Past Events</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {pastEvents.map(event => (
-            <div key={event.id} className="bg-neutral p-6 rounded-lg shadow-md hover:shadow-lg transition">
-              <h3 className="text-2xl font-bold">{event.title}</h3>
-              <p className="text-lg text-gray-500">{event.date}</p>
-            </div>
-          ))}
+          {pastEvents.length > 0 ? (
+            pastEvents.map(event => (
+              <div key={event.id} className="bg-neutral p-6 rounded-lg shadow-md hover:shadow-lg transition">
+                {event.imageUrl && (
+                  <img
+                    src={event.imageUrl}
+                    alt={event.title}
+                    className="w-full h-48 object-cover rounded-lg mb-4"
+                  />
+                )}
+                <h3 className="text-2xl font-bold">{event.title}</h3>
+                <p className="text-lg text-gray-500">{new Date(event.date).toLocaleDateString()}</p>
+                <p>{event.description}</p>
+              </div>
+            ))
+          ) : (
+            <p>No past events.</p>
+          )}
         </div>
       </section>
 

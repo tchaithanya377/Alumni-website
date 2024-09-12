@@ -40,7 +40,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-primary text-white shadow-md fixed w-full z-10">
+    <nav className="bg-primary text-white shadow-md fixed top-0 left-0 w-full z-50"> {/* Fixed positioning */}
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo */}
         <motion.h1
@@ -61,7 +61,6 @@ const Navbar = () => {
           <Link to="/events" className="hover:text-gray-300 transition duration-300">Events</Link>
           <Link to="/news" className="hover:text-gray-300 transition duration-300">News</Link>
           <Link to="/sponsors" className="hover:text-gray-300 transition duration-300">Sponsors</Link>
-
           <Link to="/contact" className="hover:text-gray-300 transition duration-300">Contact Us</Link>
         </div>
 
@@ -74,7 +73,6 @@ const Navbar = () => {
                 alt="Profile"
                 className="w-10 h-10 rounded-full"
               />
-              {/* Link to user profile */}
               <Link to="/profile" className="hover:text-gray-300 transition duration-300">
                 {currentUser.fullName || currentUser.email}
               </Link>

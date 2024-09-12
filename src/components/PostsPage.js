@@ -4,6 +4,7 @@ import { addDoc, collection, getDocs, serverTimestamp, doc, getDoc } from 'fireb
 import { db, storage, auth } from '../firebase'; // Import your Firebase config
 import { onAuthStateChanged } from 'firebase/auth'; // For user authentication
 import { FaPlus, FaTimes } from 'react-icons/fa'; // Icons for floating button and modal close
+import ReactPlayer from 'react-player'; // Import ReactPlayer for handling video
 
 const PostsPage = () => {
   const [posts, setPosts] = useState([]);
@@ -14,7 +15,7 @@ const PostsPage = () => {
   const [postType, setPostType] = useState('event');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [file, setFile] = useState(null); // Single file for image, video, or PDF
+  const [file, setFile] = useState(null); // Single file for image or video
 
   // Fetch authenticated user
   useEffect(() => {
@@ -24,7 +25,6 @@ const PostsPage = () => {
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
         const userData = userDoc.exists() ? userDoc.data() : null;
-
         setCurrentUser({ ...user, ...userData });
       } else {
         setCurrentUser(null);
@@ -138,29 +138,34 @@ const PostsPage = () => {
                 </div>
                 <p className="mt-4 text-gray-700">{post.title}</p>
                 <p className="mt-2">{post.description}</p>
+
+                {/* Check if there is a fileUrl and render the video or image */}
                 {post.fileUrl && (
-                  <div className="mt-4">
-                    {post.fileUrl.endsWith(".pdf") ? (
-                      <embed
-                        src={post.fileUrl}
-                        type="application/pdf"
-                        className="w-full h-64 object-cover mt-2 rounded-lg"
-                      />
-                    ) : post.fileUrl.match(/\.(mp4|webm|ogg)$/) ? (
-                      <video controls className="w-full h-64 object-cover mt-2 rounded-lg">
-                        <source src={post.fileUrl} type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
-                    ) : (
-                      <img
-                        src={post.fileUrl}
-                        alt="Post Attachment"
-                        className="w-full h-64 object-cover mt-2 rounded-lg"
-                      />
-                    )}
-                  </div>
-                )}
-              </div>
+  <div className="mt-4">
+    {post.fileUrl.match(/\.(mp4|webm|ogg)$/i) ? (
+      <ReactPlayer
+        url={post.fileUrl}
+        controls
+        width="100%"
+        height="400px"
+        className="react-player"
+        onError={(e) => console.error('Error playing video:', e)} // Handle video errors
+      />
+    ) : (
+      <img
+        src={post.fileUrl}
+        alt="Post Attachment"
+        className="w-full h-64 object-cover mt-2 rounded-lg"
+        onError={(e) => { 
+          e.target.src = 'https://via.placeholder.com/150';  // Fallback image if error
+        }}
+      />
+    )}
+  </div>
+)}
+
+                
+                              </div>
             ))
           ) : (
             <p>No posts available.</p>
@@ -227,10 +232,10 @@ const PostsPage = () => {
 
                 {/* File Upload */}
                 <div>
-                  <label className="block mb-2">Upload File (Image/Video/PDF)</label>
+                  <label className="block mb-2">Upload File (Image/Video)</label>
                   <input
                     type="file"
-                    accept="image/*, video/*, application/pdf"
+                    accept="image/*, video/*"
                     onChange={(e) => setFile(e.target.files[0])}
                   />
                 </div>

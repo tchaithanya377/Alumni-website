@@ -23,7 +23,7 @@ const Login = () => {
 
       // Redirect the user after successful login
       setLoading(false);
-      navigate('/dashboard'); // Replace with your dashboard or desired page
+      navigate('/post'); // Replace with your dashboard or desired page
 
     } catch (error) {
       setError(error.message);

@@ -128,7 +128,7 @@ const AlumniDirectory = () => {
             <p className="text-lg text-textColor mb-4">{selectedAlumni.qualification}</p>
 
             {/* "Go to Chat" Button */}
-            <Link to={`/chat/${selectedAlumni.id}`}>
+            <Link to={`/chats/${selectedAlumni.id}`}>
               <button
                 className="w-full mb-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-800 transition duration-300"
               >
